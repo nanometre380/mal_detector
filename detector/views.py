@@ -1,9 +1,11 @@
 from django.shortcuts import render
-from .models import Black
+from .models import Black, White
 from rest_framework import viewsets, permissions
-from .serializers import BlackSerializer
+from .serializers import BlackSerializer, WhiteSerializer
 import json
+from bs4 import BeautifulSoup
 import urllib.request
+import requests
 
 class BlackViewSet(viewsets.ModelViewSet):
     """
@@ -12,6 +14,15 @@ class BlackViewSet(viewsets.ModelViewSet):
     queryset = Black.objects.all()
     serializer_class = BlackSerializer
     permission_classes = (permissions.IsAuthenticated, )
+
+class WhiteViewSet(viewsets.ModelViewSet):
+    """
+    API endpoints that allows users to be viewed or edited.
+    """
+    queryset = White.objects.all()
+    serializer_class = WhiteSerializer
+    permission_classes = (permissions.IsAuthenticated, )
+
 
 # Create your views here.
 
@@ -38,5 +49,20 @@ def black_list(request):
                 black.url = url
                 black.save()
 
+def white_list(request):
+    catagory=['Adult', 'Arts', 'Business', 'Computers','Games','Reference','Regional','Science','Shopping','Society','Health','Home','Kids_and_Teens','News','Recreation','Sports' ]
+    for kind in catagory:
+        req=requests.get('https://www.alexa.com/topsites/category/Top/'+kind)
+        html=req.text
+        soup=BeautifulSoup(html, "html.parser")
+        pkg_list=soup.findAll("div","td DescriptionCell")
 
+        for i in pkg_list: 
+            title=i.findAll('a')
+            whiteUrl=str(title)[str(title).find('siteinfo/')+9:str(title).find('">')]
+            insert_white(whiteUrl)
 
+def insert_white(whiteUrl):
+    white = White()
+    white.url=whiteUrl
+    white.save()

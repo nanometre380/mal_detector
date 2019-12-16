@@ -25,5 +25,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('insert_black/', views.black_list, name='blacklist'),
-    path('api/', include('detector.urls'))
+    path('api/', include('detector.urls')),
+    path('insert_white/', views.white_list, name='whitelist'),
 ]

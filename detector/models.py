@@ -6,4 +6,7 @@ class Black(models.Model):
     url = models.CharField(max_length = 500)
 
     def __str__ (self):
-        self.black_id
+        return self.black_id
+
+class White(models.Model):
+    url = models.CharField(max_length=500)
