@@ -4,6 +4,7 @@ from django.conf.urls import url
 from rest_framework import routers
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import BlackViewSet, WhiteViewSet
+from . import views
 
 # router = routers.SimpleRouter()
 # router.register(r'blacks', BlackViewSet)
@@ -36,4 +37,5 @@ urlpatterns = format_suffix_patterns([
 
 urlpatterns+=[
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('search/', views.search, name="search"),
 ]

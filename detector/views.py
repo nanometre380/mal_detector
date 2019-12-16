@@ -76,3 +76,13 @@ def insert_white(whiteUrl):
     whiteUrl = "www."+whiteUrl
     white.url= json.dumps(whiteUrl)
     white.save()
+
+def search(Request):
+    search_url = request.GET['url']
+    try : 
+        result = White.get_object(url = search_url)
+    except : 
+        try : 
+            result2 = Black.get_object(url = search_url)
+        except : 
+            
