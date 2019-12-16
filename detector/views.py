@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from .models import Black, White
 from rest_framework import viewsets, permissions
+from rest_framework.response import Response
 from .serializers import BlackSerializer, WhiteSerializer
 import json
 from bs4 import BeautifulSoup
 import urllib.request
 import requests
+import json
 
 class BlackViewSet(viewsets.ModelViewSet):
     """
@@ -14,6 +16,7 @@ class BlackViewSet(viewsets.ModelViewSet):
     queryset = Black.objects.all()
     serializer_class = BlackSerializer
     permission_classes = (permissions.IsAuthenticated, )
+    lookup_field='url'
 
 class WhiteViewSet(viewsets.ModelViewSet):
     """
@@ -22,6 +25,12 @@ class WhiteViewSet(viewsets.ModelViewSet):
     queryset = White.objects.all()
     serializer_class = WhiteSerializer
     permission_classes = (permissions.IsAuthenticated, )
+    lookup_field='url'
+    # def retrieve_url(self, request, url=None):
+    #     queryset = White.objects.all()
+    #     white = get_object_or_404(queryset, url=url)
+    #     serializer = WhiteSerializer(white)
+    #     return Response(serializer.data)
 
 
 # Create your views here.
@@ -54,7 +63,7 @@ def white_list(request):
     for kind in catagory:
         req=requests.get('https://www.alexa.com/topsites/category/Top/'+kind)
         html=req.text
-        soup=BeautifulSoup(html, "html.parser")
+        soup=BeautifulSoup(html, "html.parser", from_encoding='utf-8')
         pkg_list=soup.findAll("div","td DescriptionCell")
 
         for i in pkg_list: 
@@ -64,5 +73,6 @@ def white_list(request):
 
 def insert_white(whiteUrl):
     white = White()
-    white.url=whiteUrl
+    whiteUrl = "www."+whiteUrl
+    white.url= json.dumps(whiteUrl)
     white.save()
